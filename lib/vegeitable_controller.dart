@@ -38,7 +38,8 @@ class VegetableController extends GetxController {
       )''');
     });
 
-    addDummyData();
+    //addDummyData();
+    loadItems();
   }
 
   Future<void> loadItems() async {
@@ -49,20 +50,31 @@ class VegetableController extends GetxController {
               pricePerKg: item['pricePerKg'] as double,
             ))
         .toList();
+
+        print(itemList);
   }
 
-  Future<void> getRecepts() async {
+  Future<List<Map<String,dynamic>>> getRecepts() async {
     try {
-      final recepts = await database.query('recepts');
-    } catch (e) {}
+      final List<Map<String,dynamic>>recepts = await database.query('recepts');
+      return recepts;
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+      return [];
+    }
   }
 
   Future<void> addItem(String name, double pricePerKg) async {
-    final item = VegetableItem(name: name, pricePerKg: pricePerKg);
+    try{
+      final item = VegetableItem(name: name, pricePerKg: pricePerKg);
 
     await database
         .insert('vegetables', {'name': name, 'pricePerKg': pricePerKg});
-    itemList.add(item);
+    await loadItems();
+    Get.snackbar('Success', 'Item Added Successfully');
+    }catch(e){
+      Get.snackbar('Error', e.toString());
+    }
   }
 
   void addDummyData() {
@@ -103,7 +115,16 @@ class VegetableController extends GetxController {
         },
         where: 'name=?',
         whereArgs: [item.name]);
-    //item.pricePerKg = pricePerKg;
+    await loadItems();
+  }
+
+  Future<void> deleteItem(String name)async{
+    try{
+      await database.rawDelete('DELETE FROM vegetables WHERE name=?',[name]);
+      await loadItems();
+    }catch(e){
+      Get.snackbar('Error', e.toString());
+    }
   }
 
   Future<void> saveRecept(
@@ -121,14 +142,16 @@ class VegetableController extends GetxController {
 
       await database.transaction((txn) async {
         String jsonData = '';
-        for (final entry in recepts.entries) {
-          final item = entry.value;
-          final itemJson = jsonEncode(item.toJson());
-          jsonData += itemJson + ',';
-        }
-        jsonData = jsonData.isNotEmpty
-            ? jsonData.substring(0, jsonData.length - 1)
-            : '';
+
+        List<Map<String, dynamic>> jsonList = [];
+for (final entry in recepts.entries) {
+  final item = entry.value;
+  final itemJson = item.toJson();
+  jsonList.add(itemJson);
+}
+ jsonData = jsonEncode(jsonList);
+
+
         await txn.rawInsert(
             'INSERT INTO recepts(date,receptNo,jsonData,total)'
             'VALUES(?,?,?,?)',

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:veg_shop_app/add_items.dart';
 import 'package:veg_shop_app/buy_item_data_class.dart';
+import 'package:veg_shop_app/recept_view.dart';
 import 'package:veg_shop_app/vegeitable_controller.dart';
+
+import 'nav_drawer.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -54,102 +59,105 @@ class _HomePageState extends State<HomePage> {
       builder: (BuildContext context) {
         print(enteredValues);
         return AlertDialog(
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Table(
-                border: TableBorder.all(),
-                defaultColumnWidth: IntrinsicColumnWidth(),
-                children: [
-                  TableRow(
-                    children: [
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Item',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            '1KG Price',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Purchase in grams',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      TableCell(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Price',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  ...enteredValues.entries.map((entry) {
-                    final itemData = entry.value;
-                    return TableRow(
+          title: Text('Total Bill'),
+          content:SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Table(
+                  border: TableBorder.all(),
+                  defaultColumnWidth: IntrinsicColumnWidth(),
+                  children: [
+                    TableRow(
                       children: [
                         TableCell(
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(itemData.name),
+                            padding: EdgeInsets.all(2.0),
+                            child: Text(
+                              'Item',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                         TableCell(
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(itemData.pricePerKg.toString()),
+                            padding: EdgeInsets.all(2.0),
+                            child: Text(
+                              '1KG Rs',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                         TableCell(
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(itemData.grams.toString()),
+                            padding: EdgeInsets.all(2.0),
+                            child: Text(
+                              'Purchase (g)',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                         TableCell(
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(itemData.price.toStringAsFixed(2)),
+                            padding: EdgeInsets.all(2.0),
+                            child: Text(
+                              'Price',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       ],
-                    );
-                  }).toList(),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    'Total Rs: $total',
-                    style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              )
-            ],
+                    ),
+                    ...enteredValues.entries.map((entry) {
+                      final itemData = entry.value;
+                      return TableRow(
+                        children: [
+                          TableCell(
+                            child: Padding(
+                              padding: EdgeInsets.all(2.0),
+                              child: Text(itemData.name),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: EdgeInsets.all(2.0),
+                              child: Text(itemData.pricePerKg.toString()),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: EdgeInsets.all(2.0),
+                              child: Text(itemData.grams.toString()),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: EdgeInsets.all(2.0),
+                              child: Text(itemData.price.toStringAsFixed(2)),
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Total Rs: $total',
+                      style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -180,11 +188,11 @@ class _HomePageState extends State<HomePage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
+      drawer: NavDrawer(),
       appBar: AppBar(
         title: Text('Shop Helper'),
         actions: [
-          IconButton(onPressed: onPressed, icon: Icon(Icons.add)),
-          IconButton(onPressed: onPressed, icon: Icon(Icons.receipt_long)),
+          
           IconButton(
             onPressed: onPressed,
             icon: Icon(Icons.calculate_outlined),
@@ -194,7 +202,7 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         width: width,
         height: height,
-        child: Obx(
+        child:controller.itemList.isNotEmpty? Obx(
           () => SizedBox(
             width: width,
             height: height,
@@ -228,7 +236,10 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
-        ),
+        ):Container(child: Center(
+          child: LoadingAnimationWidget.fourRotatingDots(color: Colors.green
+          , size: 35),
+        ),)
       ),
     );
   }
