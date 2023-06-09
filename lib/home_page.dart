@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
 
   var total = 0.00;
   var enteredValues = <String, BuyItemData>{};
+ 
 
   double calculateTotal(Map<String, BuyItemData> enteredValues) {
     double total = 0.00;
@@ -164,6 +165,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () async {
                 await controller.saveRecept(enteredValues, total);
                 _gramControllers.clear();
+                
                 Navigator.of(context).pop();
               },
               child: Text('SAVE'),
@@ -190,12 +192,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
-        title: Text('Shop Helper'),
+        iconTheme: IconThemeData(),
         actions: [
-          
+          Center(child: Text('Total Sales Rs:${controller.dayTotal.toStringAsFixed(2)}',style: TextStyle(fontSize: 20),)),
           IconButton(
             onPressed: onPressed,
-            icon: Icon(Icons.calculate_outlined),
+            icon: Icon(Icons.calculate_outlined,size: 40,color: Color.fromARGB(255, 255, 239, 14),),
           ),
         ],
       ),
@@ -236,9 +238,15 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
-        ):Container(child: Center(
-          child: LoadingAnimationWidget.fourRotatingDots(color: Colors.green
-          , size: 35),
+        ):Container(child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: LoadingAnimationWidget.fourRotatingDots(color: Colors.green
+              , size: 35),
+            ),
+            Text('No Items to show!')
+          ],
         ),)
       ),
     );

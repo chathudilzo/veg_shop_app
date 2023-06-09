@@ -74,7 +74,8 @@ print(_recepts);
             SizedBox(height: 10,),
               Table(
                 border: TableBorder.all(),
-                defaultColumnWidth: FixedColumnWidth(MediaQuery.of(context).size.width/4-13),
+                // defaultColumnWidth: FixedColumnWidth(MediaQuery.of(context).size.width/4-13),
+                defaultColumnWidth: IntrinsicColumnWidth(),
                 children: [
                 TableRow(
                   children: [
@@ -111,7 +112,16 @@ print(_recepts);
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Recepts'),),
-      body:_isLoading?Container(): Padding(
+      body:_listViewItems.isEmpty?Center(
+        child: Container(child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            LoadingAnimationWidget.prograssiveDots(color: Colors.green, size: 45)
+            ,
+            Text('No Items to show!')
+          ],
+        ),),
+      ): Padding(
         padding: const EdgeInsets.all(8.0),
         child:_isLoading?LoadingAnimationWidget.inkDrop(color: Colors.green,size: 35):ListView(
           shrinkWrap: true,

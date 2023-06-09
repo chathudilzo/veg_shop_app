@@ -29,7 +29,9 @@ var _priceControllers=<String ,TextEditingController>{};
             showDialog(context: context, builder: (BuildContext context){
               return AlertDialog(
                 title: Text('Add Item'),
-                content: Form(child: Column(
+                content: Form(
+                  key: _formKey1,
+                  child: Column(
                   children: [
                     TextFormField(controller: _nameController,
                     decoration: InputDecoration(label: Text('Item Name'),hintText:'carrot'),
@@ -176,8 +178,16 @@ child:controller.itemList.isNotEmpty? Obx(()=>Center(
   }),
   
   ),
-)):Center(child: LoadingAnimationWidget.hexagonDots(color: Colors.blue
-, size: 35),)
+)):Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    
+        Center(child: LoadingAnimationWidget.hexagonDots(color: Colors.blue
+    
+    , size: 40),),
+    Text('No Items to show!'),
+  ],
+)
       ),
     );
   }

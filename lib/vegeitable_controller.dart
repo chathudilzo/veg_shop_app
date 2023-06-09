@@ -10,6 +10,8 @@ class VegetableController extends GetxController {
   late final Database database;
 
   final itemList = <VegetableItem>[].obs;
+  final  finalValueList=<Map<String,dynamic>>[].obs;
+  var dayTotal=0.0.obs;
 
   @override
   void onInit() {
@@ -36,10 +38,19 @@ class VegetableController extends GetxController {
         name TEXT,
         pricePerKg REAL
       )''');
+
+      db.execute('''CREATE TABLE IF NOT EXISTS dailytotal(
+        id INTEGER PRIMARY KEY,
+        date TEXT,
+        total REAL
+      )''');
+      
     });
 
     //addDummyData();
+    getDaysTotals();
     loadItems();
+    dayTotal.value=await getGivenDayTotal(DateTime.now().toString());
   }
 
   Future<void> loadItems() async {
@@ -61,6 +72,90 @@ class VegetableController extends GetxController {
     } catch (e) {
       Get.snackbar('Error', e.toString());
       return [];
+    }
+  }
+
+  Future<List<Map<String,dynamic>>> getDaysTotals()async{
+    try{
+      final List<Map<String,dynamic>>days=await database.query('dailytotal');
+      print(days);
+      return days;
+    }catch(e){
+      return [];
+    }
+  }
+
+Future<double>getGivenDayTotal(String day)async{
+  try{
+    double total=0.00;
+DateTime parsedDay = DateTime.parse(day);
+    String formattedDay = DateFormat('yyyy-MM-dd').format(parsedDay);
+
+    day=(formattedDay);
+    final List<Map<String,dynamic>> result=await database.query('dailytotal',where:'date=?',whereArgs:[day]);
+    if(result.isNotEmpty){
+      total=result.first['total'] as double;
+    }
+    print(total);
+    return total;
+  }catch(e){
+    print(e.toString());
+    return 0.0;
+  }
+}
+
+Future<void>getTotalvalues()async{
+  try{
+    final List<Map<String,dynamic>> recepts=await getRecepts();
+final List<Map<String,dynamic>> valueList=[];
+
+    for(final recept in recepts){
+      final String jsonData=recept['jsonData'] as String;
+      final List<dynamic> jsonDataList=jsonDecode(jsonData);
+
+      for(final itemData in jsonDataList){
+        var found=false;
+        for(Map<String,dynamic> item in valueList){
+          String name=item['name'];
+          double grams=item['grams'];
+
+          if(name==itemData['name'] as String){
+           item['grams']=grams+itemData['grams'];
+            found=true;
+            break;
+          }
+        }
+        if(!found){
+          valueList.add({'name':itemData['name'],'grams':itemData['grams']});
+
+        }
+      }
+    }
+    finalValueList.value=valueList;
+    print('ValueList:$finalValueList');
+  }catch(e){
+print(e.toString());
+  }
+}
+
+  Future<void>updateDailyTotal(String date,double bill)async{
+    try{
+      final List<Map<String,dynamic>>result=await database.query('dailytotal',where:'date=?',whereArgs: [date]);
+
+      if(result.isNotEmpty){
+        final double currentTotal=result.first['total'] as double;
+        final double newTotal=currentTotal+bill;
+
+        await database.update('dailytotal', {
+          'total':newTotal
+        },where: 'date=?',whereArgs: [date]);
+        
+      }else{
+        await database.insert('dailytotal',{'date':date,'total':bill});
+      }
+
+    }catch(e){
+print(e.toString());
     }
   }
 
@@ -131,10 +226,11 @@ class VegetableController extends GetxController {
       Map<String, BuyItemData> recepts, double total) async {
     try {
       final currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-
+await updateDailyTotal(currentDate, total);
       final result = await database.query('recepts');
       print('recepts table$result');
-
+dayTotal.value=await getGivenDayTotal(DateTime.now().toString());
+print('daytotal:${dayTotal}');
       final lastRectNo =
           result.isNotEmpty ? result.last['receptNo'] as int? : 0;
 
@@ -157,6 +253,8 @@ for (final entry in recepts.entries) {
             'VALUES(?,?,?,?)',
             [currentDate, receptNo, jsonData, total]);
       });
+
+      await getTotalvalues();
     } catch (e) {
       print(e);
     }
