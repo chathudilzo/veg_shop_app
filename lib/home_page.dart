@@ -31,6 +31,8 @@ class _HomePageState extends State<HomePage> {
     return total;
   }
 
+
+
   void onPressed() {
     enteredValues.clear();
     for (final item in controller.itemList) {
@@ -165,7 +167,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () async {
                 await controller.saveRecept(enteredValues, total);
                 _gramControllers.clear();
-                
+                print(controller.finalValueList.length);
                 Navigator.of(context).pop();
               },
               child: Text('SAVE'),
