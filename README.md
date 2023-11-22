@@ -1,6 +1,24 @@
 # veg_shop_app
 
 Simple billing vegitable shopp app
+<img src="https://github.com/chathudilzo/veg_shop_app/assets/93638679/ffbaeb42-0826-4886-848e-f0fcc8594c81" width="350" height="600" />
+
+<img src="https://github.com/chathudilzo/veg_shop_app/assets/93638679/71d796ca-8790-4daa-8308-85639c4560d8" width="350" height="600" />
+
+<img src="https://github.com/chathudilzo/veg_shop_app/assets/93638679/3d808a81-7eb4-49c0-9aad-7efc41439d8c" width="350" height="600" />
+
+
+<img src="https://github.com/chathudilzo/veg_shop_app/assets/93638679/22c3c11b-5d2e-461a-a8cc-849dc3b4946b" width="350" height="600" />
+
+<img src="https://github.com/chathudilzo/veg_shop_app/assets/93638679/625b4326-4e71-48ae-b7fc-80cf6775841c" width="350" height="600" />
+
+<img src="https://github.com/chathudilzo/veg_shop_app/assets/93638679/085540ca-6aa3-4080-a9d4-41d4d1b0a52c" width="350" height="600" />
+
+
+<img src="https://github.com/chathudilzo/veg_shop_app/assets/93638679/22b21d54-fc44-4174-a9cc-ef8fc1a0056b" width="350" height="600" />
+
+<img src="https://github.com/chathudilzo/veg_shop_app/assets/93638679/72eb54ad-9f36-409f-9450-1bf2e032f333" width="350" height="600" />
+
 
 ## Getting Started
 
